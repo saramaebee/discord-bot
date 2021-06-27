@@ -1,9 +1,13 @@
-import { Client, TextChannel } from "discord.js";
+import { Client, Intents, TextChannel } from "discord.js";
 import { config as env } from "dotenv";
 import DirectoryUtils from "./utils/DirectoryUtils";
 import { handlers_directory, AUTHENTICATION_MESSAGE_CHANNEL, AUTHENTICATION_MESSAGE_ID, PRODUCTION_ENV } from "./config.json";
 
-const client = new Client();
+const client = new Client({
+	ws: {
+		intents: [Intents.FLAGS.GUILD_MEMBERS]
+	}
+});
 
 if (process.env.NODE_ENV !== PRODUCTION_ENV) {
 	env({
@@ -11,7 +15,7 @@ if (process.env.NODE_ENV !== PRODUCTION_ENV) {
 	});
 }
 
-(async () => {
+async function app() {
 	if (process.env.DISCORD_TOKEN) {
 		try {
 			await client.login(process.env.DISCORD_TOKEN);
@@ -40,4 +44,6 @@ if (process.env.NODE_ENV !== PRODUCTION_ENV) {
 	} else {
 		throw new Error("You must supply the DISCORD_TOKEN environment variable.");
 	}
-})();
+}
+
+export default app;
